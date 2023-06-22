@@ -1,0 +1,65 @@
+package main
+
+import (
+"context"
+"fmt"
+"log"
+
+"google.golang.org/api/drive/v3"
+"google.golang.org/api/option"
+)
+
+func main() {
+// filePath := "hello.txt"
+// Create a new Drive client with credentials from file.
+client, err := drive.NewService(context.Background(), option.WithCredentialsFile("./tripzone-384812-8ac85fa9ab25.json"),
+option.WithScopes(drive.DriveScope))
+if err != nil {
+log.Fatalf("Failed to create Drive client: %v", err)
+}
+
+// DeleteAllFiles(client)
+
+// folders := []string{"folder-1", "folder-2", "folder-3", "folder-4", "folder-5", "folder-6", "folder-7", "folder-8"}
+// for i := 0; i < len(folders); i++ { // id, err :=CreateNewFolder(client, folders[i]) // if err !=nil { //
+	log.Println(err) // } // fmt.Printf("Folder created successfully. ID: %s\n", *id) // } files, err
+	:=FilesList(client) if err !=nil { log.Println(err) } for i :=0; i < len(files.Files); i++ { fmt.Printf("file id=>
+	%s ------- file name: %s \n ", files.Files[i].Id, files.Files[i].Name)
+	}
+	}
+
+	func DeleteAllFiles(client *drive.Service) {
+	files, err := FilesList(client)
+	if err != nil {
+	log.Println(err)
+	}
+	for i := 0; i < len(files.Files); i++ { fmt.Printf("file id=> %s ------- file name: %s \n ", files.Files[i].Id,
+		files.Files[i].Name)
+		client.Files.Delete(files.Files[i].Id).Do()
+		}
+		}
+
+		func FilesList(client *drive.Service) (*drive.FileList, error) {
+		// List files in the Drive account.
+		files, err := client.Files.List().Fields("files(id, name)").Do()
+		if err != nil {
+		return nil, err
+		}
+		return files, nil
+		}
+
+		func CreateNewFolder(client *drive.Service, name string) (*string, error) {
+		// Create a new folder in Google Drive.
+		folder := &drive.File{
+		Name: name,
+		MimeType: "application/vnd.google-apps.folder",
+		}
+
+		createdFolder, err := client.Files.Create(folder).Do()
+		if err != nil {
+		return nil, err
+		}
+
+		// Print the folder ID of the newly created folder.
+		return &createdFolder.Id, nil
+		}
